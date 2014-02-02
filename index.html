@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Video Sensor - Open Sport Project</title>
+
+<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+
+<script type="text/javascript">
+
+/**
+*  jQuery listen for clicks and interaction	
+* 
+*/	
+$(document).ready(function(){
+	
+/*
+window.addEventListener('load', eventWindowLoaded, false);
+function eventWindowLoaded() {
+   canvasApp();
+
+}
+*/
+
+	$("#startSwimline").click(function(e) {
+		e.preventDefault(e);
+		
+
+
+
+		canvasApp();
+
+
+	});
+
+function canvasApp() {
+/*
+  if (!canvasSupport()) {
+          return;
+        }
+*/
+	//drawScreen ();
+
+		theCanvas = document.getElementById("canvasOne");
+		context = theCanvas.getContext("2d");
+		var speed = -1;
+		var y = 150;
+		var x = 1050;
+
+    function  drawScreen () {
+
+      context.fillStyle = '#EEEEEE';
+      context.fillRect(0, 0, theCanvas.width, theCanvas.height);
+      //Box
+      context.strokeStyle = '#000000';
+      context.strokeRect(1,  1, theCanvas.width-2, theCanvas.height-2);
+
+	// the swimming pool
+      context.strokeStyle = '#FF0000';
+      context.strokeRect(50,  150, 1000, 10);
+      // five metre marks  every 200px
+	context.strokeStyle = '#0404B4';
+	context.strokeRect(250,  150, 2, 40);
+	context.strokeRect(450,  150, 2, 40);
+	context.strokeRect(650,  150, 2, 40);
+	context.strokeRect(850,  150, 2, 40);
+
+	var motiondirection = 0;
+      // Create ball
+      x += speed;
+      if(x > 50  && x < 1050)
+      {
+      	if(x== 250 || x== 450 || x== 650 || x== 850 )
+	{
+		// first set direction of speed	
+console.log('input speed');
+console.log(speed);
+		if(speed > 0 )
+		{
+			motiondirection = 1;
+		}
+		else if(speed < 0)
+		{
+			motiondirection = -1;
+		}
+	
+		// then work out location and adjust speed based on timing inputs
+		if(x == 850) {
+			speed = 2 * motiondirection;
+		
+		}
+		else if (x ==250)
+		{
+		
+			speed = 2 * motiondirection;
+		}
+		else
+		{
+		
+			speed = 1 * motiondirection;
+		}
+		
+		
+console.log('splits');
+
+	}
+//console.log(x);
+console.log('logic one');
+	context.fillStyle = "#000000";
+	context.beginPath();
+	context.arc(x,y,15,0,Math.PI*2,true);
+	context.closePath();
+	context.fill();
+	}
+	else if(x < 150 )
+	{
+//console.log(x);	
+console.log('logic two');
+	speed = 1;
+	}
+	else if(x > 1050 )
+	{
+//console.log(x);	
+console.log('logic three');
+	speed = -1;
+	x = 1050
+	}
+
+   }
+
+setInterval(drawScreen, 20);
+
+}
+
+
+});
+</script>
+
+</head>
+<body>
+
+<canvas id="canvasOne" width="1200" height="300"></canvas>
+
+<a href="" id="startSwimline" >Start</a>
+
+</body>
+
+</html>
