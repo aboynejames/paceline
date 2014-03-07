@@ -13,125 +13,462 @@
 * 
 */	
 $(document).ready(function(){
-	
-/*
-window.addEventListener('load', eventWindowLoaded, false);
-function eventWindowLoaded() {
-   canvasApp();
 
-}
-*/
+	canvasApp();
+		
+	var speed = 0;
+	var y = 150;
+	var x = 50;
+	var splitcount = 0;
+	var timedistanceinterval = 5;
+	var lengthofpool = 25;
+	var motiondirection = 0;
+	var pixelspersplit = 200;
+
+	// incoming data splits (milliseconds)
+	var splitsin = [2540, 3040, 3310, 3150, 3590, 2270, 3190, 3310, 3090, 3680];
+	
+	var realspeed =  realspeedCalculation(splitsin);
+console.log(realspeed);
+	// split distance motion direction pixel profile
+	var motionsplitprofile = splitpixelprofile();
+console.log(motionsplitprofile);
 
 	$("#startSwimline").click(function(e) {
 		e.preventDefault(e);
-		
-
-
-
-		canvasApp();
-
-
+		setInterval(function() {drawScreen()}, 20);
 	});
 
-function canvasApp() {
-/*
-  if (!canvasSupport()) {
-          return;
-        }
-*/
-	//drawScreen ();
+	function canvasApp() {
 
 		theCanvas = document.getElementById("canvasOne");
 		context = theCanvas.getContext("2d");
-		var speed = -1;
-		var y = 150;
-		var x = 1050;
 
-    function  drawScreen () {
+		context.fillStyle = '#EEEEEE';
+		context.fillRect(0, 0, theCanvas.width, theCanvas.height);
+		//Box
+		context.strokeStyle = '#000000';
+		context.strokeRect(1,  1, theCanvas.width-2, theCanvas.height-2);
+	      		// the swimming pool
+		context.strokeStyle = '#FF0000';
+		context.strokeRect(50,  150, 1000, 40);
+		// five metre marks  every 200px
+		context.strokeStyle = '#0404B4';
+		context.strokeRect(250,  150, 2, 40);
+		context.strokeRect(450,  150, 2, 40);
+		context.strokeRect(650,  150, 2, 40);
+		context.strokeRect(850,  150, 2, 40);
+		
 
-      context.fillStyle = '#EEEEEE';
-      context.fillRect(0, 0, theCanvas.width, theCanvas.height);
-      //Box
-      context.strokeStyle = '#000000';
-      context.strokeRect(1,  1, theCanvas.width-2, theCanvas.height-2);
-
-	// the swimming pool
-      context.strokeStyle = '#FF0000';
-      context.strokeRect(50,  150, 1000, 10);
-      // five metre marks  every 200px
-	context.strokeStyle = '#0404B4';
-	context.strokeRect(250,  150, 2, 40);
-	context.strokeRect(450,  150, 2, 40);
-	context.strokeRect(650,  150, 2, 40);
-	context.strokeRect(850,  150, 2, 40);
-
-	var motiondirection = 0;
-      // Create ball
-      x += speed;
-      if(x > 50  && x < 1050)
-      {
-      	if(x== 250 || x== 450 || x== 650 || x== 850 )
-	{
-		// first set direction of speed	
-console.log('input speed');
-console.log(speed);
-		if(speed > 0 )
-		{
-			motiondirection = 1;
-		}
-		else if(speed < 0)
-		{
-			motiondirection = -1;
-		}
+	};
 	
-		// then work out location and adjust speed based on timing inputs
-		if(x == 850) {
-			speed = 2 * motiondirection;
-		
-		}
-		else if (x ==250)
+	    function  drawScreen () {
+//console.log(splitcount);
+//console.log('middle pace at' + x);
+		// clear the previous placeline mark
+		context.fillStyle = "#EEEEEE";
+		context.beginPath();
+		context.arc(x,y,5,0,Math.PI*2,true);
+		context.closePath();
+		context.fill();
+
+		if(splitcount == 0)
 		{
+			// start
+console.log('start speed set');			
+			speed = motionsplitprofile['speedDirection'][0];
+			splitcount++;
+			motiondirection = 1;
+			context.font = "14px Arial";
+			context.strokeText("Speed: 1.97",100,140);
 		
-			speed = 2 * motiondirection;
 		}
 		else
 		{
-		
-			speed = 1 * motiondirection;
-		}
-		
-		
-console.log('splits');
 
-	}
-//console.log(x);
-console.log('logic one');
+			if(x > 50  && x < 250)
+			{
+			
+				if(motiondirection == 1)
+				{
+console.log('first speed');					
+					speed = motionsplitprofile['speedDirection'][1];
+					splitcount++;
+
+				}
+				else
+				{
+console.log('10 speed');					
+					speed = motionsplitprofile['speedDirection'][9];
+					splitcount++;
+					context.strokeText("Speed: 1.36",100,240);				
+				}
+			
+			}
+			else if (x > 250  && x < 450)
+			{
+			
+				if(motiondirection == 1)
+				{
+console.log('second speed');
+					speed = motionsplitprofile['speedDirection'][2];
+					splitcount++;	
+					context.strokeText("Speed: 1.64",300,140);					
+				}
+				else
+				{
+console.log('9th speed');				
+					speed = motionsplitprofile['speedDirection'][8];
+					splitcount++;
+					context.strokeText("Speed: 1.61",300,240);				
+				}
+
+			}
+			else if (x > 450  && x < 650)
+			{
+			
+				if(motiondirection == 1)
+				{
+console.log('third speed');				
+					speed = motionsplitprofile['speedDirection'][3];
+					splitcount++;
+					context.strokeText("Speed: 1.51",500,140);
+				}
+				else
+				{
+console.log('8th speed');				
+					speed = motionsplitprofile['speedDirection'][7];
+					splitcount++;
+					context.strokeText("Speed: 1.51",500,240);				
+				}
+		
+			}
+			else if (x > 650  && x < 850)
+			{
+//console.log(motiondirection)			
+				// depending on direction of motion speed will be positive or minus
+				if(motiondirection == 1)
+				{
+console.log('forth speed');			
+					speed = motionsplitprofile['speedDirection'][4];
+					splitcount++;
+					context.strokeText("Speed: 1.58",700,140);					
+				}
+				else
+				{
+console.log('7th speed');			
+				
+					speed = motionsplitprofile['speedDirection'][6];
+					splitcount++;
+					context.strokeText("Speed: 1.57",700,240);				
+				}
+				
+	
+			}
+			else if (x > 850  && x < 1050)
+			{
+//console.log(motiondirection)			
+				// depending on direction of motion speed will be positive or minus
+				if(motiondirection == 1)
+				{
+console.log('fifth speed');							
+					speed = motionsplitprofile['speedDirection'][4];
+					splitcount++;
+					context.strokeText("Speed: 1.39",900,140);					
+				}
+				else
+				{
+console.log('6th speed');							
+					speed = motionsplitprofile['speedDirection'][5];
+					splitcount++;
+					context.strokeText("Speed: 2.20",900,240);				
+				}
+				
+	
+			}
+
+			else if(x < 150 )
+			{
+	//console.log(x);	
+	console.log('turn direction 1');
+				motiondirection = 1;
+				speed = 0 * motiondirection;
+			}
+			else if(x > 1050 )
+			{
+	//console.log(x);	
+	console.log('turn direction -1');
+				motiondirection = -1;
+				speed = motionsplitprofile['speedDirection'][5];
+				x = 1050;
+				y = 170;
+			}
+		}
+
+
+/*
+	
+
+		if(splitcount == 0)
+		{
+			// start
+console.log('start speed set');			
+			speed = realspeed[0];
+			splitcount++;
+		
+		}
+		else
+		{
+
+			if(x > 50  && x < 1050)
+			{
+				// start, split counter/distance gone speed at splits and stop  direction of motion
+				// calculate split position in pixels no. splits * 200px
+				var splitdistancegone = splitcount * pixelspersplit;
+console.log(splitdistancegone);				
+				splitcount++;	
+			
+			
+			
+	//console.log(x);
+	//console.log('logic one');
+
+	//console.log('input speed');
+	//console.log(speed);
+				// first set direction of speed	
+				if(speed > 0 )
+				{
+					motiondirection = 1;
+				}
+				else if(speed < 0)
+				{
+					motiondirection = -1;
+				}
+				else 
+				{
+					motiondirection = 1;
+				}
+
+	//console.log(x);
+				if(x== 50 || x== 250 || x== 450 || x== 650 || x== 850 )
+				{
+					splitcount++
+	console.log('split coun' + splitcount);				
+					// then work out location and adjust speed based on timing inputs
+					if(x == 50) {
+	console.log('first split');
+						speed = 2 * motiondirection;
+					}
+					else if (x ==250)
+					{
+	console.log('2 split');			
+						speed = 1 * motiondirection;
+					}
+					else if (x ==450)
+					{
+	console.log('3 split');			
+						speed = 1 * motiondirection;
+					}
+					else if (x ==650)
+					{
+	console.log('4 split');			
+						speed = 1 * motiondirection;
+					}
+					else if (x ==850)
+					{
+	console.log('5 split');			
+						speed = 1 * motiondirection;
+					}
+					else
+					{
+						speed = 1 * motiondirection;
+					}
+
+				}
+	
+			}
+			else if(x < 150 )
+			{
+	//console.log(x);	
+	console.log('turn direction 1');
+				motiondirection = 1;
+				speed = 2 * motiondirection;
+			}
+			else if(x > 1050 )
+			{
+	//console.log(x);	
+	console.log('turn direction -1');
+				motiondirection = -1;
+				speed = 2 * motiondirection;
+				x = 1050
+			}
+		}
+*/		
+		
+		// the number of pixelto add to equal speed required
+//console.log('sppeeed');
+//console.log(speed);
+		x += speed;		
+		
+	// display the tracking ball
+//console.log('display ball');
+//console.log(speed);
 	context.fillStyle = "#000000";
 	context.beginPath();
-	context.arc(x,y,15,0,Math.PI*2,true);
+	context.arc(x,y,5,0,Math.PI*2,true);
 	context.closePath();
 	context.fill();
+
 	}
-	else if(x < 150 )
+
+	function realspeedCalculation(splitsin) 
 	{
-//console.log(x);	
-console.log('logic two');
-	speed = 1;
-	}
-	else if(x > 1050 )
+	// take time and split distance and produce speed
+	var actualspeed = [];
+	splitsin.forEach(function(spt) {
+	
+		var speedcalc = (timedistanceinterval/(spt/1000));
+		actualspeed.push(speedcalc);
+	
+	});
+	
+	return actualspeed;
+	};
+	
+	
+	function splitpixelprofile()
 	{
-//console.log(x);	
-console.log('logic three');
-	speed = -1;
-	x = 1050
+		// given length of pool create pixel presention distance and motion of direction value ie 1 or -1
+		var splitspixel = {};
+		var holdingsplitsdata = [];
+		var holdingMotion = [];
+		var holdingPixelplacer = [];
+		var speedDirection = [];
+		var nosplitsin = splitsin.length;
+		var endoflengthpixels = nosplitevents * pixelspersplit;
+		var splitchangedirectionEvery = lengthofpool/timedistanceinterval;
+		
+console.log('no split change direction' + splitchangedirectionEvery);	
+
+		var nosplitevents = timedistanceinterval/timedistanceinterval;
+console.log('no split events' + nosplitevents);		
+		var nopixelsperlength = nosplitsin * pixelspersplit;
+console.log('no pixels per length' + nopixelsperlength);		
+		var cumulativepixeldistance = 0;
+		var motiondirectionP = 0;
+		var motiondirection = 0;
+		var lastpixelPlacernumber = splitchangedirectionEvery + 1;
+		
+		var splength = realspeed.length;
+		var pixcelplacerDistance = 0;	
+		// create distance pixel change of speed point array ie [50,250,450,650,850,1050,850,650,450,250]   50 250 450 650 850 1050 850 650 etc....
+		  for (i=0;i< splength; i++) {
+
+			// logic for motion dirction 1 or -1
+			var divideby = i%splitchangedirectionEvery;
+
+//console.log(divideby);			
+
+			if(i == lastpixelPlacernumber)
+			{
+				motiondirectionP = -1;
+				pixcelplacerDistance = pixcelplacerDistance + (motiondirectionP *  pixelspersplit);
+				holdingPixelplacer.push(pixcelplacerDistance);
+
+//console.log('no 6 speical');				
+//console.log('pixel placer at' + pixcelplacerDistance);				
+			}
+			else
+			{
+				
+				// need account for 6 placement points with change of direction on 5
+				if(divideby == 0)
+				{
+					// take current direction and reverse it
+					if(motiondirectionP == 0)
+					{
+						//start pixel placement
+//console.log('start logic');
+						pixcelplacerDistance = x;
+						holdingPixelplacer.push(pixcelplacerDistance);
+						motiondirectionP = 1;
+//console.log('pixel placer at' + pixcelplacerDistance);						
+
+					}
+					else
+					{
+						// change the distanced from positive to negative
+						pixcelplacerDistance = pixcelplacerDistance + (motiondirectionP *  pixelspersplit);
+						holdingPixelplacer.push(pixcelplacerDistance);
+//console.log('other end of th poool');
+//console.log('change of direction' + pixcelplacerDistance);
+					}
+				}
+				else
+				{
+//console.log(' not start or no 6');				
+						//motiondirection = 1;
+						pixcelplacerDistance = pixcelplacerDistance + (motiondirectionP *  pixelspersplit);
+						holdingPixelplacer.push(pixcelplacerDistance);
+//console.log('pixel placer at' + pixcelplacerDistance);						
+				}
+				
+			}
+			
+
+		}
+//console.log('holder pixel placer');
+//console.log(holdingPixelplacer);
+		
+		// create motion of direction array ie [1,1,1,1,1,-1,-1,-1,-1,-1]
+		
+		//splitsin.forEach(function(spid) {
+		  for (i=0;i< splength; i++) {
+		  
+			// logic for motion dirction 1 or -1
+			var divideby = i%splitchangedirectionEvery;
+//console.log(divideby);			
+			if(divideby == 0)
+			{
+				// take current direction and reverse it
+				if(motiondirection == 0)
+				{
+					motiondirection = 1;
+
+				}
+				else
+				{
+					motiondirection = -1;
+					
+				}
+			}
+	
+			holdingMotion.push(motiondirection);
+		}
+//console.log('motion holder');
+//console.log(holdingMotion);
+
+			// multiple by the actual speeds
+		for (i=0;i< splength; i++) {
+		
+			speedDirection.push(holdingMotion[i] * realspeed[i]);	
+		
+		
+		};
+
+//console.log('speeds with direction');
+//console.log(speedDirection);		
+
+		// combine distance speed change point, speed, motion direction
+		// {[50,1,1.9], [250, 1,1.8], [450,1,1.8], [650,1,1.5], [850,1,1.8], [1050,-1,1.5], [850,-1,2.0], [650,-1,1.9], [450,-1,1.8], [250,-1,1.6]}
+		speedPixelplaces = {};
+		speedPixelplaces['pixelPlacers'] = holdingPixelplacer;
+		speedPixelplaces['speedDirection'] = speedDirection;
+		
+		return speedPixelplaces;
+	
 	}
-
-   }
-
-setInterval(drawScreen, 20);
-
-}
-
+	
 
 });
 </script>
